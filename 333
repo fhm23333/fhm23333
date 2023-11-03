@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+double maxx,mo=0,d2,temlen=0,d1,c,p;
+//temlen：油箱中在到达了下一个加油站时油箱中的剩余油量可以继续走的路程
+int n;
+struct add
+{
+    double co;
+    double dis;
+}pl[10000];//加油站结构体：dis-距离起点的距离，co：油价
+int move(int now)//1.now:现在到达的加油站
+{
+    int can=99999;
+    int f=pl[now].dis;
+    for(int i=now+1;i<=n&&pl[i].dis-f<=maxx;i++)
+    {
+        if(pl[i].co<pl[now].co)//2.
+        {
+            mo+=((pl[i].dis-f-temlen)/d2)*pl[now].co;
+            temlen=0;
+            return i;
+        }
+        if(can==99999||pl[i].co<pl[can].co)can=i;
+    }
+    if(d1-pl[now].dis<=maxx)
+        {
+            mo+=((d1-pl[now].dis-temlen)/d2)*pl[now].co;
+            return 9999;
+        }
+    if(can==99999)//4.
+    {
+        cout<<"No Solution";
+        return -1;
+    }
+    else//3.
+    {
+        mo+=c*pl[now].co;
+        temlen+=(maxx-pl[can].dis+f);
+        return can;
+    }
+}
+int cmp(add a,add b)
+{
+    return a.dis<b.dis;
+}
+int main()
+{
+    cin>>d1>>c>>d2>>p>>n;
+    pl[0].dis=0;
+    pl[0].co=p;
+    for(int i=1;i<=n;i++)cin>>pl[i].dis>>pl[i].co;
+    sort(pl,pl+n,cmp);
+    maxx=c*d2;
+    int k=0,t;
+    do
+    {
+        t=move(k);
+        k=t;
+        if(t==-1)return 0;
+    }while(t!=9999);
+    printf("%.2f",mo);
+    return 0;
+}
